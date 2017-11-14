@@ -155,7 +155,8 @@ module.exports = {
             }
           }
         }
-        return this.model(tenantModelName, newSchema, tenantCollectionName);
+        connection.models[tenantModelName] = this.model(tenantModelName, newSchema, tenantCollectionName);
+        return connection.models[tenantModelName];
       };
       if (arguments.length === 1) {
         tenants = _.sortBy(connection.mtModel.tenants, function(tenant) {

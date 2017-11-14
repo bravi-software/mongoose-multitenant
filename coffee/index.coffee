@@ -15,10 +15,10 @@ owl = require 'owl-deepcopy'
 Added by @watnotte
 ###
 
-module.exports = 
+module.exports =
 	collectionDelimiter: '__',
 	connection: mongoose,
-	
+
 	setup: () ->
 		self = @
 		if arguments.length == 1 and arguments[0]
@@ -26,7 +26,7 @@ module.exports =
 				@collectionDelimiter = arguments[0]
 			else
 				@connection = arguments[0]
-		
+
 		if arguments.length == 2
 			if arguments[0] and _.isString(arguments[0])
 				@collectionDelimiter = arguments[0]
@@ -51,9 +51,9 @@ module.exports =
 					return false
 
 
-				newPath = 
+				newPath =
 					type:mongoose.Schema.Types.ObjectId
-		
+
 				for key,val of path.options
 					if key isnt 'type'
 						newPath[key] = _.clone(val, true)
@@ -82,9 +82,9 @@ module.exports =
 						else
 							newPath = extendPathWithTenantId(tenantId, config.caster)
 							if newPath
-								
+
 								newSchema.path(prop, [newPath])
-		
+
 					else
 						if config.schema?
 							newSubSchema = extendSchemaWithTenantId(tenantId, config.schema)
@@ -101,7 +101,7 @@ module.exports =
 					return @schema.$tenantId
 				schema.statics.getModel = schema.methods.getModel = (name) ->
 					return connection.mtModel(@getTenantId() + '.' + name)
-			
+
 			make = (tenantId, modelName) ->
 				console.log 'making %s for %s', modelName, tenantId
 				if connection.mtModel.tenants.indexOf(tenantId) == -1
@@ -134,14 +134,15 @@ module.exports =
 						preModelName = tenantId + collectionDelimiter + pre
 						if !connection.models[preModelName]? and mongoose.mtModel.goingToCompile.indexOf(preModelName) < 0
 							connection.mtModel(tenantId, pre)
-				return @model(tenantModelName, newSchema, tenantCollectionName)
-				
+				connection.models[tenantModelName] = @model(tenantModelName, newSchema, tenantCollectionName)
+				return connection.models[tenantModelName]
+
 			if arguments.length == 1
 				# try to figure out what tenant this is for
 				tenants = _.sortBy connection.mtModel.tenants, (tenant) ->
 					return tenant.length
 				tenants.reverse()
-				
+
 				args = arguments
 				tenantId = _.find tenants, (tenant) ->
 					return new RegExp('^'+tenant + '.').test(args[0])
