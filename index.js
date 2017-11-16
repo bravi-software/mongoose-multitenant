@@ -126,9 +126,8 @@ module.exports = {
       };
       make = function(tenantId, modelName) {
         var model, newSchema, origSchema, pre, preModelName, tenantCollectionName, tenantModelName, uniq, _i, _len;
-        console.log('making %s for %s', modelName, tenantId);
+
         if (connection.mtModel.tenants.indexOf(tenantId) === -1) {
-          console.log('adding %s', tenantId);
           connection.mtModel.tenants.push(tenantId);
         }
         tenantModelName = tenantId + collectionDelimiter + modelName;
@@ -190,7 +189,6 @@ module.exports = {
     connection.mtModel.goingToCompile = [];
     connection.mtModel.tenants = [];
     return connection.mtModel.addTenant = function(tenantId) {
-      console.log('adding tenant %s', tenantId);
       return connection.mtModel.tenants.push(tenantId);
     };
   }
